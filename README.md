@@ -20,7 +20,7 @@ const isQtyChangedSpec: ISpecification<Product> = new Spec(
 const isOriginalAndQtyChangedSpec: ISpecification<Product> =
   isOriginalSpec.and(isQtyChangedSpec)
 
-if (isNewSpec.isSatisfiedBy(Product)) {
+if (isNewSpec.isSatisfiedBy(product)) {
   return 'A'
 }
 if (isOriginalAndQtyChangedSpec.isSatisfiedBy(product)) {
