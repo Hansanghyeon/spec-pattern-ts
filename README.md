@@ -6,6 +6,8 @@
 
 example
 ```ts
+const product = new Product()
+
 // 새롭게 추가된 상품인지 확인하는 스펙
 const isNewSpec: ISpecification<Product> = new Spec(
   (candidate) => candidate.isNew === true
@@ -18,10 +20,10 @@ const isQtyChangedSpec: ISpecification<Product> = new Spec(
 const isOriginalAndQtyChangedSpec: ISpecification<Product> =
   isOriginalSpec.and(isQtyChangedSpec)
 
-if (isNewSpec.isSatisfiedBy(this)) {
+if (isNewSpec.isSatisfiedBy(Product)) {
   return 'A'
 }
-if (isOriginalAndQtyChangedSpec.isSatisfiedBy(this)) {
+if (isOriginalAndQtyChangedSpec.isSatisfiedBy(product)) {
   return 'B'
 }
 ```
