@@ -18,7 +18,9 @@ const isQtyChangedSpec: ISpecification<Product> = new Spec(
 )
 // 새롭게 추가된 상품이 아니고 기존 상품이면서 갯수가 변경되고 1개 이상일때
 const isOriginalAndQtyChangedSpec: ISpecification<Product> =
-  isOriginalSpec.and(isQtyChangedSpec)
+  isNewSpec
+    .not()
+    .and(isQtyChangedSpec)
 
 if (isNewSpec.isSatisfiedBy(product)) {
   return 'A'
