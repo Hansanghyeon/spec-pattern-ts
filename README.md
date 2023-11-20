@@ -5,6 +5,8 @@
 - Spec 클래스를 추가하였다.
 
 ```ts
+import { Spec, type ISpecification } from '@hyeon/spec'
+
 const product = new Product()
 
 // 새롭게 추가된 상품인지 확인하는 스펙
