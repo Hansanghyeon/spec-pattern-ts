@@ -7,7 +7,7 @@ export interface ISpecification<T = unknown> {
   not(): ISpecification<T>
 }
 
-export abstract class CompositeSpecification<T = unknown>
+abstract class CompositeSpecification<T = unknown>
   implements ISpecification<T>
 {
   abstract isSatisfiedBy(candidate: T): boolean
@@ -33,7 +33,7 @@ export abstract class CompositeSpecification<T = unknown>
   }
 }
 
-export class AndSpecification<T> extends CompositeSpecification<T> {
+class AndSpecification<T> extends CompositeSpecification<T> {
   constructor(
     private leftCondition: ISpecification<T>,
     private rightCondition: ISpecification<T>
@@ -49,7 +49,7 @@ export class AndSpecification<T> extends CompositeSpecification<T> {
   }
 }
 
-export class AndNotSpecification<T> extends CompositeSpecification<T> {
+class AndNotSpecification<T> extends CompositeSpecification<T> {
   constructor(
     private leftCondition: ISpecification<T>,
     private rightCondition: ISpecification<T>
@@ -65,7 +65,7 @@ export class AndNotSpecification<T> extends CompositeSpecification<T> {
   }
 }
 
-export class OrSpecification<T> extends CompositeSpecification<T> {
+class OrSpecification<T> extends CompositeSpecification<T> {
   constructor(
     private leftCondition: ISpecification<T>,
     private rightCondition: ISpecification<T>
@@ -81,7 +81,7 @@ export class OrSpecification<T> extends CompositeSpecification<T> {
   }
 }
 
-export class OrNotSpecification<T> extends CompositeSpecification<T> {
+class OrNotSpecification<T> extends CompositeSpecification<T> {
   constructor(
     private leftCondition: ISpecification<T>,
     private rightCondition: ISpecification<T>
@@ -97,7 +97,7 @@ export class OrNotSpecification<T> extends CompositeSpecification<T> {
   }
 }
 
-export class NotSpecification<T> extends CompositeSpecification<T> {
+class NotSpecification<T> extends CompositeSpecification<T> {
   constructor(private wrapped: ISpecification<T>) {
     super()
   }

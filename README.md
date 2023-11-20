@@ -4,7 +4,6 @@
 - 제네릭타입으로 받아올수있도록 타입을 추가하였다.
 - Spec 클래스를 추가하였다.
 
-example
 ```ts
 const product = new Product()
 

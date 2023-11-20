@@ -1,0 +1,49 @@
+{
+  "name": "@hyeon/spec",
+  "description": "Specification pattern for TypeScript",
+  "version": "1.0.0",
+  "module": "./lib/index.js",
+  "types": "./lib/index.d.ts",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/hansanghyeon/spec.git"
+  },
+  "keywords": [
+    "hyeon",
+    "typescript",
+    "specification"
+  ],
+  "author": "hyeon",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/hansanghyeon/spec/issues"
+  },
+  "homepage": "https://github.com/hansanghyeon/spec#readme",
+  "scripts": {
+    "build": "nanobundle build",
+    "prepublishOnly": "bun run build"
+  },
+  "devDependencies": {
+    "bun-types": "latest",
+    "nanobundle": "^1.6.0",
+    "typescript": "^5.0.0"
+  },
+  "peerDependencies": {
+    "typescript": "^5.0.0"
+  },
+  "exports": {
+    ".": {
+      "types": "./lib/index.d.ts",
+      "require": "./lib/index.cjs",
+      "import": "./lib/index.mjs"
+    },
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "lib"
+  ],
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org/",
+    "access": "public"
+  }
+}
