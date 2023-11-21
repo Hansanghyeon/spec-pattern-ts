@@ -1,3 +1,5 @@
+[![](https://img.shields.io/npm/v/@hyeon/spec/latest)](https://www.npmjs.com/package/@hyeon/spec/v/latest)
+
 [Specification pattern - Wikipedia](https://en.wikipedia.org/wiki/Specification_pattern#TypeScript) 
 
 - ts 에제가있지만 항상 타입이 unkown인 문제가있다.
