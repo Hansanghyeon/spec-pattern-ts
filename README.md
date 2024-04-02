@@ -1,13 +1,13 @@
-[![](https://img.shields.io/npm/v/@hyeon/spec/latest)](https://www.npmjs.com/package/@hyeon/spec/v/latest)
+[![](https://img.shields.io/npm/v/spec-pattern-ts/latest)](https://www.npmjs.com/package/spec-pattern-ts/v/latest) [![Static Badge](https://img.shields.io/badge/Specification%20pattern%20-%20Wikipedia?style=flat&logo=wikipedia&color=%234F4F4F&link=https%3A%2F%2Fen.wikipedia.org%2Fwiki%2FSpecification_pattern%23TypeScript)](https://en.wikipedia.org/wiki/Specification_pattern#TypeScript)
 
-[Specification pattern - Wikipedia](https://en.wikipedia.org/wiki/Specification_pattern#TypeScript) 
+## using
 
-- ts 에제가있지만 항상 타입이 unkown인 문제가있다.
-- 제네릭타입으로 받아올수있도록 타입을 추가하였다.
-- Spec 클래스를 추가하였다.
+```sh
+npm install spec-pattern-ts
+```
 
 ```ts
-import { Spec, type ISpecification } from '@hyeon/spec'
+import { Spec, type ISpecification } from 'spec-pattern-ts'
 
 const product = new Product()
 
@@ -32,3 +32,9 @@ if (isOriginalAndQtyChangedSpec.isSatisfiedBy(product)) {
   return 'B'
 }
 ```
+
+## Feature
+
+- ts 에제가있지만 항상 타입이 unkown인 문제
+- 제네릭타입으로 받아올수있도록 타입을 추가
+- Spec 클래스를 추가

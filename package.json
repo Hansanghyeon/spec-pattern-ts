@@ -1,12 +1,12 @@
 {
-  "name": "@hyeon/spec",
+  "name": "spec-pattern-ts",
   "description": "Specification pattern for TypeScript",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "module": "./lib/index.js",
   "types": "./lib/index.d.ts",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/hansanghyeon/spec.git"
+    "url": "git+https://github.com/hansanghyeon/spec-pattern-ts.git"
   },
   "keywords": [
     "hyeon",
@@ -16,9 +16,9 @@
   "author": "hyeon",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/hansanghyeon/spec/issues"
+    "url": "https://github.com/hansanghyeon/spec-pattern-ts/issues"
   },
-  "homepage": "https://github.com/hansanghyeon/spec#readme",
+  "homepage": "https://github.com/hansanghyeon/spec-pattern-ts#readme",
   "scripts": {
     "build": "nanobundle build",
     "prepublishOnly": "bun run build"
