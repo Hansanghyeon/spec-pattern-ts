@@ -1,7 +1,7 @@
 {
   "name": "spec-pattern-ts",
   "description": "Specification pattern for TypeScript",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "module": "./lib/index.js",
   "types": "./lib/index.d.ts",
   "repository": {

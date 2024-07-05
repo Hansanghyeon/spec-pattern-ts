@@ -2,6 +2,7 @@ export interface ISpecification<T = unknown> {
   isSatisfiedBy(candidate: T): boolean
   // isSatisfiedBy alias
   safe(candidate: T): boolean
+  model(candidate: T): boolean
   and(other: ISpecification<T>): ISpecification<T>
   andNot(other: ISpecification<T>): ISpecification<T>
   or(other: ISpecification<T>): ISpecification<T>
@@ -14,6 +15,7 @@ abstract class CompositeSpecification<T = unknown>
 {
   abstract isSatisfiedBy(candidate: T): boolean
   abstract safe(candidate: T): boolean
+  abstract model(candidate: T): boolean
 
   and(other: ISpecification<T>): ISpecification<T> {
     return new AndSpecification(this, other)
@@ -52,6 +54,7 @@ class AndSpecification<T> extends CompositeSpecification<T> {
   }
   // isSatisfiedBy alias
   safe = this.isSatisfiedBy
+  model = this.isSatisfiedBy
 }
 
 class AndNotSpecification<T> extends CompositeSpecification<T> {
@@ -70,6 +73,7 @@ class AndNotSpecification<T> extends CompositeSpecification<T> {
   }
   // isSatisfiedBy alias
   safe = this.isSatisfiedBy
+  model = this.isSatisfiedBy
 }
 
 class OrSpecification<T> extends CompositeSpecification<T> {
@@ -88,6 +92,7 @@ class OrSpecification<T> extends CompositeSpecification<T> {
   }
   // isSatisfiedBy alias
   safe = this.isSatisfiedBy
+  model = this.isSatisfiedBy
 }
 
 class OrNotSpecification<T> extends CompositeSpecification<T> {
@@ -106,6 +111,7 @@ class OrNotSpecification<T> extends CompositeSpecification<T> {
   }
   // isSatisfiedBy alias
   safe = this.isSatisfiedBy
+  model = this.isSatisfiedBy
 }
 
 class NotSpecification<T> extends CompositeSpecification<T> {
@@ -118,6 +124,7 @@ class NotSpecification<T> extends CompositeSpecification<T> {
   }
   // isSatisfiedBy alias
   safe = this.isSatisfiedBy
+  model = this.isSatisfiedBy
 }
 
 export class Spec<T = unknown> extends CompositeSpecification<T> {
@@ -133,4 +140,5 @@ export class Spec<T = unknown> extends CompositeSpecification<T> {
   }
   // isSatisfiedBy alias
   safe = this.isSatisfiedBy
+  model = this.isSatisfiedBy
 }
