@@ -21,7 +21,7 @@ describe('제품 스펙 테스트', () => {
   
     const spec = new Spec(nameContains(`A`)).not().or(highPrice);
 
-    const product = products.filter(x => spec.isSatisfiedBy(x)).map(Product.info);
+    const product = products.filter(x => spec.safe(x)).map(Product.info);
     
     expect(product).toEqual([
       { name: 'widgetB', price: 1100 },
