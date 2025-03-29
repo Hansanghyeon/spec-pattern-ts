@@ -22,9 +22,27 @@ export interface ISpecification<T = unknown> {
 abstract class CompositeSpecification<T = unknown>
   implements ISpecification<T>
 {
+  /**
+   * 명세를 만족하는지 검사하는 기본 메서드
+   * @param candidate 검사할 대상
+   */
   abstract isSatisfiedBy(candidate: T): boolean
-  abstract safe(candidate: T): boolean
-  abstract model(candidate: T): boolean
+
+  /**
+   * isSatisfiedBy의 별칭 - 더 직관적인 네이밍
+   * @param candidate 검사할 대상
+   */
+  safe(candidate: T): boolean {
+    return this.isSatisfiedBy(candidate)
+  }
+
+  /**
+   * isSatisfiedBy의 별칭 - 도메인 모델 검증용
+   * @param candidate 검사할 대상
+   */
+  model(candidate: T): boolean {
+    return this.isSatisfiedBy(candidate)
+  }
 
   and(other: ISpecification<T>): ISpecification<T> {
     return new AndSpecification(this, other)
