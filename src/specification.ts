@@ -1,4 +1,13 @@
+/**
+ * 명세 패턴의 기본 인터페이스
+ * @template T - 검증할 대상의 타입
+ */
 export interface ISpecification<T = unknown> {
+  /**
+   * 주어진 객체가 명세를 만족하는지 검사
+   * @param candidate 검사할 객체
+   * @returns 명세 만족 여부
+   */
   isSatisfiedBy(candidate: T): boolean
   // isSatisfiedBy alias
   safe(candidate: T): boolean
