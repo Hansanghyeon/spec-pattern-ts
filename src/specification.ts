@@ -132,6 +132,9 @@ export class Spec<T = unknown> extends CompositeSpecification<T> {
 
   constructor(expression: (candidate: T) => boolean) {
     super()
+    if (typeof expression !== 'function') {
+      throw new Error('Expression must be a function')
+    }
     this.#expression = expression
   }
 
