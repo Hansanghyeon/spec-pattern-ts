@@ -5,7 +5,7 @@
  * v2에서는 자연스럽게 가능합니다.
  */
 
-import { Spec } from '../src/specification'
+import { Spec } from '../src/specification-v2'
 
 // 타입 정의
 interface Activity {

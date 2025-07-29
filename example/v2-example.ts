@@ -1,4 +1,4 @@
-import { Spec, define } from '../src/specification'
+import { Spec, define } from '../src/specification-v2'
 import { expect, test, describe } from 'bun:test'
 
 // 도메인 타입 정의
