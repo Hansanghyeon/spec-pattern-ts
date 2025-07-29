@@ -2,7 +2,7 @@
   "name": "spec-pattern-ts",
   "description": "Specification pattern for TypeScript - v2 with key-based specs",
   "version": "3.0.0",
-  "module": "./lib/index.js",
+  "main": "./lib/index.cjs",
   "types": "./lib/index.d.ts",
   "repository": {
     "type": "git",
@@ -22,7 +22,8 @@
   },
   "homepage": "https://github.com/hansanghyeon/spec-pattern-ts#readme",
   "scripts": {
-    "build": "nanobundle build src/index.ts",
+    "build": "nanobundle build src/index.ts && bun run build:umd",
+    "build:umd": "bunx esbuild src/index.ts --bundle --format=iife --global-name=SpecPattern --outfile=lib/index.js --sourcemap --external:tslib",
     "prepublishOnly": "bun run build"
   },
   "devDependencies": {
@@ -37,10 +38,13 @@
     ".": {
       "types": "./lib/index.d.ts",
       "require": "./lib/index.cjs",
-      "import": "./lib/index.mjs"
+      "import": "./lib/index.mjs",
+      "default": "./lib/index.js"
     },
     "./package.json": "./package.json"
   },
+  "unpkg": "./lib/index.js",
+  "jsdelivr": "./lib/index.js",
   "files": [
     "lib",
     "docs/MIGRATION-GUIDE.md"

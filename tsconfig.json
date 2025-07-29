@@ -1,12 +1,14 @@
 {
   "compilerOptions": {
     "lib": ["ESNext"],
-    "module": "esnext",
+    "module": "Node16",
     "target": "esnext",
-    "moduleResolution": "bundler",
+    "moduleResolution": "Node16",
     "moduleDetection": "force",
     "allowImportingTsExtensions": true,
-    "noEmit": true,
+    "declaration": true,
+    "declarationMap": true,
+    "emitDeclarationOnly": true,
     "composite": true,
     "strict": true,
     "downlevelIteration": true,
