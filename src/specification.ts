@@ -1,174 +1,208 @@
 /**
- * 명세 패턴의 기본 인터페이스
- * @template T - 검증할 대상의 타입
+ * spec-pattern-ts v2.0.0
+ * 모든 스펙은 키를 가져야 합니다.
  */
-export interface ISpecification<T = unknown> {
-  /**
-   * 주어진 객체가 명세를 만족하는지 검사
-   * @param candidate 검사할 객체
-   * @returns 명세 만족 여부
-   */
-  isSatisfiedBy(candidate: T): boolean
-  // isSatisfiedBy alias
-  safe(candidate: T): boolean
-  model(candidate: T): boolean
-  and(other: ISpecification<T>): ISpecification<T>
-  andNot(other: ISpecification<T>): ISpecification<T>
-  or(other: ISpecification<T>): ISpecification<T>
-  orNot(other: ISpecification<T>): ISpecification<T>
-  not(): ISpecification<T>
+
+/**
+ * 스펙 인터페이스 - v2에서는 키가 필수
+ * @template K - 스펙의 키
+ * @template T - 검증할 타입
+ */
+export interface ISpecification<K extends string, T> {
+  readonly key: K
+  isSatisfiedBy(candidate: { [P in K]: T }): boolean
+  and<K2 extends string, T2>(
+    other: ISpecification<K2, T2>
+  ): ICompositeSpecification<{ [P in K]: T } & { [P in K2]: T2 }>
+  or<K2 extends string, T2>(
+    other: ISpecification<K2, T2>
+  ): ICompositeSpecification<{ [P in K]: T } | { [P in K2]: T2 }>
+  not(): ISpecification<K, T>
 }
 
-abstract class CompositeSpecification<T = unknown>
-  implements ISpecification<T>
-{
-  /**
-   * 명세를 만족하는지 검사하는 기본 메서드
-   * @param candidate 검사할 대상
-   */
-  abstract isSatisfiedBy(candidate: T): boolean
-
-  /**
-   * isSatisfiedBy의 별칭 - 더 직관적인 네이밍
-   * @param candidate 검사할 대상
-   */
-  safe(candidate: T): boolean {
-    return this.isSatisfiedBy(candidate)
-  }
-
-  /**
-   * isSatisfiedBy의 별칭 - 도메인 모델 검증용
-   * @param candidate 검사할 대상
-   */
-  model(candidate: T): boolean {
-    return this.isSatisfiedBy(candidate)
-  }
-
-  and(other: ISpecification<T>): ISpecification<T> {
-    return new AndSpecification(this, other)
-  }
-
-  andNot(other: ISpecification<T>): ISpecification<T> {
-    return new AndNotSpecification(this, other)
-  }
-
-  or(other: ISpecification<T>): ISpecification<T> {
-    return new OrSpecification(this, other)
-  }
-
-  orNot(other: ISpecification<T>): ISpecification<T> {
-    return new OrNotSpecification(this, other)
-  }
-
-  not(): ISpecification<T> {
-    return new NotSpecification(this)
-  }
+/**
+ * 복합 스펙 인터페이스
+ */
+export interface ICompositeSpecification<TContext extends Record<string, any>> {
+  isSatisfiedBy(candidate: TContext): boolean
+  and<K extends string, T>(
+    spec: ISpecification<K, T>
+  ): ICompositeSpecification<TContext & { [P in K]: T }>
+  or<K extends string, T>(
+    spec: ISpecification<K, T>
+  ): ICompositeSpecification<TContext | { [P in K]: T }>
+  not(): ICompositeSpecification<TContext>
 }
 
-class AndSpecification<T> extends CompositeSpecification<T> {
+/**
+ * 기본 스펙 구현
+ */
+export class Specification<K extends string, T> implements ISpecification<K, T> {
   constructor(
-    private leftCondition: ISpecification<T>,
-    private rightCondition: ISpecification<T>
-  ) {
-    super()
+    readonly key: K,
+    private predicate: (value: T) => boolean
+  ) {}
+
+  isSatisfiedBy(candidate: { [P in K]: T }): boolean {
+    return this.key in candidate && this.predicate(candidate[this.key])
   }
 
-  isSatisfiedBy(candidate: T): boolean {
-    return (
-      this.leftCondition.isSatisfiedBy(candidate) &&
-      this.rightCondition.isSatisfiedBy(candidate)
-    )
+  and<K2 extends string, T2>(
+    other: ISpecification<K2, T2>
+  ): ICompositeSpecification<{ [P in K]: T } & { [P in K2]: T2 }> {
+    return new CompositeSpecification([this as any, other as any])
   }
-  // isSatisfiedBy alias
-  safe = this.isSatisfiedBy
-  model = this.isSatisfiedBy
+
+  or<K2 extends string, T2>(
+    other: ISpecification<K2, T2>
+  ): ICompositeSpecification<{ [P in K]: T } | { [P in K2]: T2 }> {
+    return new OrSpecification([this as any, other as any])
+  }
+
+  not(): ISpecification<K, T> {
+    return new Specification(this.key, (value) => !this.predicate(value))
+  }
 }
 
-class AndNotSpecification<T> extends CompositeSpecification<T> {
+/**
+ * AND 복합 스펙
+ */
+class CompositeSpecification<TContext extends Record<string, any>> 
+  implements ICompositeSpecification<TContext> {
+  
   constructor(
-    private leftCondition: ISpecification<T>,
-    private rightCondition: ISpecification<T>
-  ) {
-    super()
-  }
+    private specs: Array<ISpecification<any, any>>
+  ) {}
 
-  isSatisfiedBy(candidate: T): boolean {
-    return (
-      this.leftCondition.isSatisfiedBy(candidate) &&
-      this.rightCondition.isSatisfiedBy(candidate) !== true
-    )
-  }
-  // isSatisfiedBy alias
-  safe = this.isSatisfiedBy
-  model = this.isSatisfiedBy
-}
-
-class OrSpecification<T> extends CompositeSpecification<T> {
-  constructor(
-    private leftCondition: ISpecification<T>,
-    private rightCondition: ISpecification<T>
-  ) {
-    super()
-  }
-
-  isSatisfiedBy(candidate: T): boolean {
-    return (
-      this.leftCondition.isSatisfiedBy(candidate) ||
-      this.rightCondition.isSatisfiedBy(candidate)
-    )
-  }
-  // isSatisfiedBy alias
-  safe = this.isSatisfiedBy
-  model = this.isSatisfiedBy
-}
-
-class OrNotSpecification<T> extends CompositeSpecification<T> {
-  constructor(
-    private leftCondition: ISpecification<T>,
-    private rightCondition: ISpecification<T>
-  ) {
-    super()
-  }
-
-  isSatisfiedBy(candidate: T): boolean {
-    return (
-      this.leftCondition.isSatisfiedBy(candidate) ||
-      this.rightCondition.isSatisfiedBy(candidate) !== true
-    )
-  }
-  // isSatisfiedBy alias
-  safe = this.isSatisfiedBy
-  model = this.isSatisfiedBy
-}
-
-class NotSpecification<T> extends CompositeSpecification<T> {
-  constructor(private wrapped: ISpecification<T>) {
-    super()
-  }
-
-  isSatisfiedBy(candidate: T): boolean {
-    return !this.wrapped.isSatisfiedBy(candidate)
-  }
-  // isSatisfiedBy alias
-  safe = this.isSatisfiedBy
-  model = this.isSatisfiedBy
-}
-
-export class Spec<T = unknown> extends CompositeSpecification<T> {
-  #expression: (candidate: T) => boolean
-
-  constructor(expression: (candidate: T) => boolean) {
-    super()
-    if (typeof expression !== 'function') {
-      throw new Error('Expression must be a function')
+  isSatisfiedBy(candidate: TContext): boolean {
+    // 키 중복 체크 및 스마트 처리
+    const keyMap = new Map<string, Array<ISpecification<any, any>>>()
+    
+    for (const spec of this.specs) {
+      if (!keyMap.has(spec.key)) {
+        keyMap.set(spec.key, [])
+      }
+      keyMap.get(spec.key)!.push(spec)
     }
-    this.#expression = expression
+
+    // 각 키별로 검증
+    for (const [key, specs] of keyMap) {
+      if (!(key in candidate)) return false
+      
+      // 같은 키의 모든 스펙이 AND 조건으로 만족되어야 함
+      const allSatisfied = specs.every(spec => 
+        spec.isSatisfiedBy({ [key]: candidate[key] } as any)
+      )
+      if (!allSatisfied) return false
+    }
+
+    return true
   }
 
-  isSatisfiedBy(candidate: T): boolean {
-    return this.#expression(candidate)
+  and<K extends string, T>(
+    spec: ISpecification<K, T>
+  ): ICompositeSpecification<TContext & { [P in K]: T }> {
+    return new CompositeSpecification([...this.specs, spec as any])
   }
-  // isSatisfiedBy alias
-  safe = this.isSatisfiedBy
-  model = this.isSatisfiedBy
+
+  or<K extends string, T>(
+    spec: ISpecification<K, T>
+  ): ICompositeSpecification<TContext | { [P in K]: T }> {
+    return new OrSpecification([this, spec as any])
+  }
+
+  not(): ICompositeSpecification<TContext> {
+    return new NotCompositeSpecification(this)
+  }
+}
+
+/**
+ * OR 복합 스펙
+ */
+class OrSpecification<TContext extends Record<string, any>> 
+  implements ICompositeSpecification<TContext> {
+  
+  constructor(
+    private specs: Array<ISpecification<any, any> | ICompositeSpecification<any>>
+  ) {}
+
+  isSatisfiedBy(candidate: TContext): boolean {
+    return this.specs.some(spec => spec.isSatisfiedBy(candidate))
+  }
+
+  and<K extends string, T>(
+    spec: ISpecification<K, T>
+  ): ICompositeSpecification<TContext & { [P in K]: T }> {
+    // OR 다음에 AND는 새로운 CompositeSpec으로
+    return new CompositeSpecification([this as any, spec as any])
+  }
+
+  or<K extends string, T>(
+    spec: ISpecification<K, T>
+  ): ICompositeSpecification<TContext | { [P in K]: T }> {
+    return new OrSpecification([...this.specs, spec as any])
+  }
+
+  not(): ICompositeSpecification<TContext> {
+    return new NotCompositeSpecification(this)
+  }
+}
+
+/**
+ * NOT 복합 스펙
+ */
+class NotCompositeSpecification<TContext extends Record<string, any>> 
+  implements ICompositeSpecification<TContext> {
+  
+  constructor(
+    private spec: ICompositeSpecification<TContext>
+  ) {}
+
+  isSatisfiedBy(candidate: TContext): boolean {
+    return !this.spec.isSatisfiedBy(candidate)
+  }
+
+  and<K extends string, T>(
+    spec: ISpecification<K, T>
+  ): ICompositeSpecification<TContext & { [P in K]: T }> {
+    return new CompositeSpecification([this as any, spec as any])
+  }
+
+  or<K extends string, T>(
+    spec: ISpecification<K, T>
+  ): ICompositeSpecification<TContext | { [P in K]: T }> {
+    return new OrSpecification([this as any, spec as any])
+  }
+
+  not(): ICompositeSpecification<TContext> {
+    return this.spec // NOT의 NOT은 원본
+  }
+}
+
+/**
+ * 스펙 생성 함수
+ */
+export function Spec<K extends string, T>(
+  key: K,
+  predicate: (value: T) => boolean
+): ISpecification<K, T> {
+  return new Specification(key, predicate)
+}
+
+/**
+ * 스펙 정의 빌더
+ */
+export class SpecBuilder<T> {
+  constructor(private predicate: (value: T) => boolean) {}
+
+  as<K extends string>(key: K): ISpecification<K, T> {
+    return new Specification(key, this.predicate)
+  }
+}
+
+/**
+ * 스펙 정의를 시작하는 헬퍼
+ */
+export function define<T>(predicate: (value: T) => boolean): SpecBuilder<T> {
+  return new SpecBuilder(predicate)
 }
