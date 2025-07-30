@@ -129,7 +129,7 @@ class NotSpecification<TContext extends Record<string, any>>
 /**
  * 스펙 생성 함수
  */
-export function Spec<K extends string, T>(
+export function Spec<T, K extends string>(
   key: K,
   predicate: (value: T) => boolean
 ): ISpecification<{ [P in K]: T }> {
