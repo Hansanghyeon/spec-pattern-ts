@@ -40,6 +40,11 @@ const 유효한사용자 = 성인.and(회원).and(활성상태)
 if (유효한사용자.isSatisfiedBy({ user: currentUser })) {
   // 접근 허용
 }
+
+// .is() alias를 사용한 더 간편한 문법
+if (유효한사용자.is({ user: currentUser })) {
+  // .is()는 .isSatisfiedBy()의 alias입니다
+}
 ```
 
 ### 2. 복잡한 조합

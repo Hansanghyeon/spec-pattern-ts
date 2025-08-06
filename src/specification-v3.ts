@@ -10,6 +10,17 @@
  */
 export interface ISpecification<TContext extends Record<string, any>> {
   isSatisfiedBy(candidate: TContext): boolean
+  /**
+   * isSatisfiedBy의 간편한 alias
+   * @alias isSatisfiedBy
+   * @param candidate - 검증할 컨텍스트 객체
+   * @returns 스펙 만족 여부
+   * @example
+   * ```typescript
+   * const isValid = spec.is(data); // spec.isSatisfiedBy(data)와 동일
+   * ```
+   */
+  is(candidate: TContext): boolean
   and<TOther extends Record<string, any>>(
     other: ISpecification<TOther>
   ): ISpecification<TContext & TOther>
@@ -26,6 +37,14 @@ abstract class BaseSpecification<TContext extends Record<string, any>>
   implements ISpecification<TContext> {
   
   abstract isSatisfiedBy(candidate: TContext): boolean
+
+  /**
+   * isSatisfiedBy의 간편한 alias
+   * @alias isSatisfiedBy
+   */
+  is(candidate: TContext): boolean {
+    return this.isSatisfiedBy(candidate)
+  }
 
   and<TOther extends Record<string, any>>(
     other: ISpecification<TOther>

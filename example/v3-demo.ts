@@ -101,6 +101,32 @@ const fullData: UserSession = {
 
 console.log('콘텐츠 발행 가능:', 콘텐츠발행가능.isSatisfiedBy(fullData))
 
+// .is() alias 사용 예제 - 더 간편한 메서드명
+console.log('\n=== .is() alias 사용 예제 ===')
+
+// 기본 사용법 - isSatisfiedBy 대신 is 사용
+console.log('로그인됨 (is):', 로그인됨.is(data1))
+console.log('관리자 (is):', 관리자.is(adminData))
+
+// 복합 스펙에서도 동일하게 작동
+const 프리미엄사용자 = 승인됨.and(고수익)
+console.log('프리미엄사용자 (is):', 프리미엄사용자.is({
+  publisher: { status: 'approved', revenue: 20000 }
+}))
+
+// 체이닝과 함께 사용
+const 액세스권한 = 로그인됨.and(관리자.or(승인됨))
+console.log('액세스권한 (is):', 액세스권한.is(data1))
+
+// CompositeSpec에서도 사용 가능
+console.log('활성세션 (is):', 활성세션.is(fullData))
+
+// .is()와 .isSatisfiedBy()는 동일한 결과 반환
+console.log('\n동일성 확인:')
+console.log('isSatisfiedBy:', 콘텐츠발행가능.isSatisfiedBy(fullData))
+console.log('is:', 콘텐츠발행가능.is(fullData))
+console.log('동일한가?:', 콘텐츠발행가능.is(fullData) === 콘텐츠발행가능.isSatisfiedBy(fullData))
+
 // 타입 안전성 데모
 // TypeScript가 필요한 모든 프로퍼티를 추적
 const 복합검증 = 로그인됨.and(승인됨).and(관리자)

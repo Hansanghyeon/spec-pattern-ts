@@ -193,4 +193,72 @@ describe('spec-pattern-ts v3 - 통합 인터페이스', () => {
     //   // c 누락!
     // })
   })
+
+  test('.is() alias 메서드', () => {
+    const 성인 = Spec('user', (u: User) => u.age >= 18)
+    const 관리자 = Spec('user', (u: User) => u.role === 'admin')
+    const 재고있음 = Spec('product', (p: Product) => p.inStock)
+    
+    const userData = { user: { name: 'John', age: 20, role: 'user' as const } }
+    const productData = { product: { name: 'Book', price: 50, inStock: true } }
+
+    // 단일 스펙에서 .is() 사용
+    expect(성인.is(userData)).toBe(true)
+    expect(성인.is({ user: { name: 'Kid', age: 15, role: 'user' } })).toBe(false)
+    
+    // .is()와 .isSatisfiedBy()가 동일한 결과 반환
+    expect(성인.is(userData)).toBe(성인.isSatisfiedBy(userData))
+    expect(재고있음.is(productData)).toBe(재고있음.isSatisfiedBy(productData))
+
+    // 복합 스펙에서도 .is() 사용 가능
+    const 성인관리자 = 성인.and(관리자)
+    const adminData = { user: { name: 'Admin', age: 30, role: 'admin' as const } }
+    
+    expect(성인관리자.is(adminData)).toBe(true)
+    expect(성인관리자.is(userData)).toBe(false)
+    
+    // NOT 연산자와 함께 사용
+    const 게스트아님 = Spec('user', (u: User) => u.role === 'guest').not()
+    expect(게스트아님.is(userData)).toBe(true)
+    expect(게스트아님.is({ user: { name: 'Guest', age: 20, role: 'guest' } })).toBe(false)
+
+    // 복잡한 조합에서도 동작
+    const 구매가능 = 성인.and(재고있음.or(관리자))
+    const complexData = {
+      user: { name: 'John', age: 20, role: 'user' as const },
+      product: { name: 'Book', price: 50, inStock: true }
+    }
+    
+    expect(구매가능.is(complexData)).toBe(true)
+    expect(구매가능.is(complexData)).toBe(구매가능.isSatisfiedBy(complexData))
+
+    // CompositeSpec에서도 .is() 사용
+    interface Context {
+      user: User
+      product: Product
+    }
+    
+    const 할인가능 = CompositeSpec<Context>(ctx => 
+      ctx.user.age >= 65 || ctx.user.role === 'admin' || ctx.product.price < 20
+    )
+    
+    expect(할인가능.is(complexData)).toBe(false)
+    expect(할인가능.is({
+      user: { name: 'Senior', age: 70, role: 'user' },
+      product: { name: 'Book', price: 50, inStock: true }
+    })).toBe(true)
+
+    // allOf, anyOf와 함께 사용
+    const 모든조건 = allOf(성인, 관리자)
+    const 하나이상 = anyOf(성인, 관리자)
+    
+    expect(모든조건.is(adminData)).toBe(true)
+    expect(모든조건.is(userData)).toBe(false)
+    expect(하나이상.is(userData)).toBe(true)
+
+    // define 헬퍼와 함께 사용
+    const 프리미엄 = define<User>(u => u.role === 'admin' || u.age >= 65).as('user')
+    expect(프리미엄.is(adminData)).toBe(true)
+    expect(프리미엄.is(userData)).toBe(false)
+  })
 })
