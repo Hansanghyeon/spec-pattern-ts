@@ -22,11 +22,12 @@
   },
   "homepage": "https://github.com/hansanghyeon/spec-pattern-ts#readme",
   "scripts": {
-    "build": "nanobundle build src/index.ts && npm run build:umd",
+    "build": "nanobundle build src/index.ts && bun run build:umd",
     "build:umd": "npx esbuild src/index.ts --bundle --format=iife --global-name=SpecPattern --outfile=lib/index.js --sourcemap --external:tslib",
-    "prepublishOnly": "npm run build"
+    "prepublishOnly": "bun run build"
   },
   "devDependencies": {
+    "bun-types": "^1.2.19",
     "esbuild": "^0.24.2",
     "nanobundle": "^1.6.0",
     "typescript": "^5.0.0"

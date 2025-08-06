@@ -22,6 +22,11 @@ jobs:
           node-version: '22.16.0'
           registry-url: 'https://registry.npmjs.org'
 
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
       - name: Check version change
         id: version-check
         run: |
@@ -47,15 +52,15 @@ jobs:
 
       - name: Install dependencies
         if: steps.version-check.outputs.version_changed == 'true'
-        run: npm ci
+        run: bun install --frozen-lockfile
 
       - name: Build
         if: steps.version-check.outputs.version_changed == 'true'
-        run: npm run build
+        run: bun run build
 
       - name: Run tests
         if: steps.version-check.outputs.version_changed == 'true'
-        run: npm test
+        run: bun test
 
       - name: Publish to NPM
         if: steps.version-check.outputs.version_changed == 'true'

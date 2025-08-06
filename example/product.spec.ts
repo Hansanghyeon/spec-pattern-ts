@@ -1,5 +1,5 @@
 import Product from './product'
-import { Spec } from '../src'
+import { CompositeSpec } from '../src'
 import { expect, test, describe } from "bun:test"
 
 describe('제품 스펙 테스트', () => {
@@ -13,15 +13,17 @@ describe('제품 스펙 테스트', () => {
 
   test('제품에 A란 명칭이 포함되지 않은 상품 또는 가경이 1000원이상인 상품', () => {
     // 제품명에 pattern이 포함되어야한다.
-    const nameContains = (pattern: string) => (product: Product) => product.name.includes(pattern)
+    const nameContains = (pattern: string) => CompositeSpec<Product>(
+      (product) => product.name.includes(pattern)
+    )
     // 제품이 해당 가격보다 높아야한다.
-    const highPrice = new Spec(
-      (product: Product) => product.price >= 1000
+    const highPrice = CompositeSpec<Product>(
+      (product) => product.price >= 1000
     );
   
-    const spec = new Spec(nameContains(`A`)).not().or(highPrice);
+    const spec = nameContains(`A`).not().or(highPrice);
 
-    const product = products.filter(x => spec.safe(x)).map(Product.info);
+    const product = products.filter(x => spec.is(x)).map(Product.info);
     
     expect(product).toEqual([
       { name: 'widgetB', price: 1100 },
