@@ -10,6 +10,9 @@ on:
 jobs:
   check-and-publish:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      packages: write
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -79,11 +82,18 @@ jobs:
       - name: Publish to GitHub Packages
         if: steps.version-check.outputs.version_changed == 'true'
         run: |
-          # Update package name for GitHub Packages
-          npm pkg set name="@hansanghyeon/spec-pattern-ts"
-          npm publish
-          # Restore original package name
-          npm pkg set name="spec-pattern-ts"
+          # Create temporary package.json for GitHub Packages
+          node -e "
+            const fs = require('fs');
+            const pkg = JSON.parse(fs.readFileSync('package.json', 'utf8'));
+            pkg.name = '@hansanghyeon/spec-pattern-ts';
+            delete pkg.publishConfig;
+            fs.writeFileSync('package.json', JSON.stringify(pkg, null, 2));
+          "
+          # Publish to GitHub Packages
+          npm publish --registry https://npm.pkg.github.com/
+          # Restore original package.json
+          git checkout HEAD -- package.json
         env:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
