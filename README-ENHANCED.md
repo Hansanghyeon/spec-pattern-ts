@@ -269,6 +269,26 @@ const canPublish = isAuthor.and(isDraft)
 
 더 많은 예제는 [example 디렉토리](example/)를 참고하세요.
 
+## 마이그레이션
+
+### v2에서 v3로
+
+v3는 v2와 완전히 호환됩니다:
+
+```typescript
+// 기존 v2 코드가 그대로 동작
+import { Spec } from 'spec-pattern-ts'
+
+// v2의 한계 - 복합 스펙 재조합 불가
+const complexSpec = spec1.and(spec2) // OK
+const moreComplex = complexSpec.and(spec3) // v2에서는 에러!
+
+// v3에서는 모든 조합이 가능
+const unlimited = spec1.and(spec2).or(spec3).and(spec4.not())
+```
+
+[전체 마이그레이션 가이드](docs/MIGRATION-GUIDE.md)
+
 ## 성능
 
 - ⚡ **단축 평가**: AND/OR 연산에서 불필요한 검증 스킵
